@@ -242,6 +242,12 @@ app.get('/review/:title',
     }
 )
 
+app.use(express.static(__dirname + '/static'))
+app.use(
+    (req, resp) => {
+        resp.redirect('/')
+    }
+)
 
 // end of configuration
 
