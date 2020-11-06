@@ -1,0 +1,32 @@
+<nav>
+    <a href="/">Home</a>
+</nav>
+
+<h3>
+    {{book.title}}
+</h3>
+by 
+<i>
+    {{book.authors}}
+</i>
+
+<div class="row">
+    <div class="col">
+        <img src="{{book.image_url}}" alt="Book cover">
+        <br>
+        Pages: {{book.pages}}
+        <br>
+        Rating: {{book.rating}} ({{book.rating_count}})
+        <br>
+        Genres:
+        <br>
+        {{book.genres}}
+        <br>
+        Synopsis:
+        <br>
+        {{book.description}}
+        <p>
+            <a href="/review">Find Review</a>
+        </p>
+    </div>
+</div>

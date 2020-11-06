@@ -7,6 +7,7 @@ const withQuery = require('with-query').default
 // SQL statements
 const SQL_GET_TITLE_LIST = 'select book_id, title from book2018 where title like ? order by title asc limit ? offset ?'
 const SQL_TOTAL_LIST = 'select count(*) as listCount from book2018 where title like ?'
+const SQL_GET_BOOK_DETAILS = 'select * from book2018 where book_id = ?'
 
 const PORT = parseInt(process.argv[2]) || parseInt(process.env.PORT) || 3000
 
@@ -58,6 +59,7 @@ const mkQuery = (sqlStmt, pool) => {
 // sql queries
 const getBookList = mkQuery(SQL_GET_TITLE_LIST, pool)
 const listCount = mkQuery(SQL_TOTAL_LIST, pool)
+const bookDetails = mkQuery(SQL_GET_BOOK_DETAILS, pool)
 
 const app = express ()
 
@@ -133,7 +135,51 @@ app.get('/list', async (req, resp) => {
     }
 })
 
+app.get('/book/:book_id', async (req, resp) => {
+    const book_id = req.params['book_id']
 
+    try {
+        const result = await bookDetails([book_id])
+        console.info(`result: `, result)
+        if (result.length <= 0) {
+            resp.status(404)
+            resp.type('text/html')
+            resp.send(`Not found: ${book_id}`)
+        }
+
+        resp.status(200)
+        resp.format({
+            'text/html': () => {
+                resp.type('text/html')
+                resp.render('book', {
+                    book: {
+                        title: result[0].title,
+                        authors: result[0].authors.replaceAll('|', ', '),
+                        image_url: result[0].image_url,
+                        pages: result[0].pages,
+                        rating: result[0].rating,
+                        rating_count: result[0].rating_count,
+                        genres: result[0].genres.replaceAll('|', ', '),
+                        description: result[0].description
+                    }
+                })
+            },
+            'application/json': () => {
+                resp.type('application/json')
+                resp.json(result[0])
+            },
+            'default': () => {
+                resp.type('text/plain')
+                resp.send(JSON.stringify(result[0]))
+            }
+        })
+    } catch(e) {
+        resp.status(500)
+        resp.type('text/html')
+        resp.send(JSON.stringify(e))
+    }
+
+})
 
 // end of configuration
 
