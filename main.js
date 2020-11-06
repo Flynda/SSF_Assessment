@@ -3,6 +3,7 @@ const handlebars = require('express-handlebars')
 const mysql = require('mysql2/promise')
 const fetch = require('node-fetch')
 const withQuery = require('with-query').default
+const morgan = require('morgan')
 
 // SQL statements
 const SQL_GET_TITLE_LIST = 'select book_id, title from book2018 where title like ? order by title asc limit ? offset ?'
@@ -69,7 +70,7 @@ const app = express ()
 app.engine('hbs', handlebars({defaultLayout: 'default.hbs'}))
 app.set('view engine', 'hbs')
 
-
+app.use(morgan('combined'))
 
 // application configuration
 app.get('/', (req, resp) => {
@@ -99,25 +100,25 @@ app.get('/list', async (req, resp) => {
     const qualifier = req.query['qualifier']
 
     const page = parseInt(req.query['page']) || 1
-    console.info('Page is: ', page)
+    //console.info('Page is: ', page)
     const offsetBy= (page - 1) * setLimit
 
     try {
         const booklist = await getBookList([`${q}%`, setLimit, offsetBy])
         const totalList = await listCount([`${q}%`])
         
-        console.info('Book List: ', booklist)
-        console.info('Count: ', totalList[0].listCount)
+        // console.info('Book List: ', booklist)
+        // console.info('Count: ', totalList[0].listCount)
 
         const totalPages = Math.ceil(totalList[0].listCount / setLimit)
-        console.info('number of pages: ', totalPages)
-        console.info(`current page: `, page)
+        // console.info('number of pages: ', totalPages)
+        // console.info(`current page: `, page)
         const hasPrevPage = (page > 1) ? 'Previous' : ''
         const hasNextPage = (page < totalPages) ? 'Next' : ''
         
-        console.info('p:', hasPrevPage)
-        console.info('n:', hasNextPage)
-        console.info('type: ', qualifier)
+        // console.info('p:', hasPrevPage)
+        // console.info('n:', hasNextPage)
+        // console.info('type: ', qualifier)
         resp.status(200)
         resp.type('text/html')
         resp.render('list', {
@@ -143,7 +144,7 @@ app.get('/book/:book_id', async (req, resp) => {
 
     try {
         const result = await bookDetails([book_id])
-        console.info(`result: `, result)
+        // console.info(`result: `, result)
         if (result.length <= 0) {
             resp.status(404)
             resp.type('text/html')
@@ -212,7 +213,7 @@ app.get('/review/:title',
             let result = await fetch(url)
             result = await result.json()
     
-            console.info(result)
+            // console.info(result)
 
             const reviews = result.results.map(
                 d => {
