@@ -147,9 +147,9 @@ app.get('/book/:book_id', async (req, resp) => {
             resp.send(`Not found: ${book_id}`)
         }
 
-        resp.status(200)
         resp.format({
             'text/html': () => {
+                resp.status(200)
                 resp.type('text/html')
                 resp.render('book', {
                     book: {
@@ -165,6 +165,7 @@ app.get('/book/:book_id', async (req, resp) => {
                 })
             },
             'application/json': () => {
+                resp.status(200)
                 resp.type('application/json')
                 resp.json(
                     {
@@ -180,8 +181,9 @@ app.get('/book/:book_id', async (req, resp) => {
                 )
             },
             'default': () => {
+                resp.status(406)
                 resp.type('text/plain')
-                resp.send(JSON.stringify(result[0]))
+                resp.send(`Not supported: ${req.get("Accept")}`)
             }
         })
     } catch(e) {
