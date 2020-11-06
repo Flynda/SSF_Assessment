@@ -4,7 +4,8 @@
     {{#each alphabet}}
         <div class="col-2">
             <form action="/list" method="get">
-                <input type="hidden" name="letter" value="{{this}}">
+                <input type="hidden" name="qualifier" value="Letter">
+                <input type="hidden" name="q" value="{{this}}">
                 <button type="submit" class="btn btn-primary mt-2">{{this}}</button>
             </form>
         </div>
@@ -15,7 +16,8 @@
     {{#each numbers}}
         <div class="col-2">
             <form action="/list" method="get">
-                <input type="hidden" name="number" value="{{this}}">
+                <input type="hidden" name="qualifier" value="Number">
+                <input type="hidden" name="q" value="{{this}}">
                 <button type="submit" class="btn btn-secondary mt-2">{{this}}</button>
             </form>
         </div>

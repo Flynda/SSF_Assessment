@@ -1,0 +1,37 @@
+<nav>
+    <a href="/">Home</a>
+</nav>
+
+{{#if hasContent}}
+    <h2 class="mt-5">{{qualifier}} {{q}}</h2>
+
+    <ul>
+        {{#each booklist}}
+        <li>
+            <a href="tv_show/{{this.book_id}}">{{this.title}}</a>
+        </li>
+        {{/each}}
+    </ul>
+    <nav class="btn-group">
+        {{#if hasPrevPage}}
+        <form action="/list" method="get">
+            <input type="hidden" name="qualifier" value="{{qualifier}}">
+            <input type="hidden" name="q" value="{{q}}">
+            <input type="hidden" name="page" value="{{prevPage}}">
+            <button type="submit" class="btn btn-secondary mx-1">Previous</button>
+        </form>
+        {{/if}}
+        {{#if hasNextPage}}
+        <form action="/list" method="get">
+            <input type="hidden" name="qualifier" value="{{qualifier}}">
+            <input type="hidden" name="q" value="{{q}}">
+            <input type="hidden" name="page" value="{{nextPage}}">
+            <button type="submit" class="btn btn-secondary mx-1">Next</button>
+        </form>
+        {{/if}}
+        
+    </nav>
+{{else}}
+    <h3>Sorry, there are no books starting with the {{qualifier}} {{q}}.</h3>
+
+{{/if}}
