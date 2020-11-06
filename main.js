@@ -11,6 +11,9 @@ const SQL_GET_BOOK_DETAILS = 'select * from book2018 where book_id = ?'
 
 const PORT = parseInt(process.argv[2]) || parseInt(process.env.PORT) || 3000
 
+const apikey = process.env.apikey || ''
+const ENDPOINT = 'https://api.nytimes.com/svc/books/v3/reviews.json'
+
 const pool = mysql.createPool({
     host: process.env.DB_host || 'localhost',
     port: parseInt(process.env.DB_PORT) || 3306,
@@ -194,10 +197,49 @@ app.get('/book/:book_id', async (req, resp) => {
 
 })
 
-app.get('/review', (req, resp) => {
-    resp.status(200)
-    resp.end()
-})
+app.get('/review/:title', 
+    async (req, resp) => {
+        const title = req.params['title']
+        const url = withQuery(
+            ENDPOINT,
+            {
+                title: title,
+                "api-key": apikey
+            }
+        )
+
+        try {
+            let result = await fetch(url)
+            result = await result.json()
+    
+            console.info(result)
+
+            const reviews = result.results.map(
+                d => {
+                    return {
+                        title: d.book_title,
+                        author: d.book_author,
+                        reviewer: d.byline,
+                        review_date: d.publication_dt,
+                        summary: d.summary,
+                        link: d.url
+                    }
+                }
+            )
+
+            resp.status(200)
+            resp.type('text/html')
+            resp.render('review', {
+                hasReview: !!result.num_results,
+                copyright:result.copyright,
+                reviews: reviews
+            })
+    
+        } catch (e) {
+            console.error(e);
+        }
+    }
+)
 
 
 // end of configuration
