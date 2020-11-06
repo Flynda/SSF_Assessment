@@ -166,7 +166,18 @@ app.get('/book/:book_id', async (req, resp) => {
             },
             'application/json': () => {
                 resp.type('application/json')
-                resp.json(result[0])
+                resp.json(
+                    {
+                        bookId: result[0].book_id,
+                        title: result[0].title,
+                        authors: result[0].authors.split('|'),
+                        summary: result[0].description,
+                        pages: result[0].pages,
+                        rating: result[0].rating,
+                        ratingCount: result[0].rating_count,
+                        genre: result[0].genres.split('|')
+                    }
+                )
             },
             'default': () => {
                 resp.type('text/plain')
@@ -180,6 +191,12 @@ app.get('/book/:book_id', async (req, resp) => {
     }
 
 })
+
+app.get('/review', (req, resp) => {
+    resp.status(200)
+    resp.end()
+})
+
 
 // end of configuration
 
